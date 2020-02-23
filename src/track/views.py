@@ -9,3 +9,7 @@ from rest_framework import generics
 class TrackListCreate(generics.ListCreateAPIView):
     queryset = Track.objects.all()
     serializer_class = TrackSerializer
+
+class TrackListFilter(generics.ListCreateAPIView):
+    queryset = Track.objects.filter(author='me')
+    serializer_class = TrackSerializer
