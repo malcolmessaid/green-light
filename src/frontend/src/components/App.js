@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
+import axios from 'axios';
 
 
 
-class SubmitBar extends Component {
+class SubmitBar extends Component 
+{
 
   constructor(props){
     super(props);
@@ -13,33 +15,77 @@ class SubmitBar extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event){
+  handleChange(event)
+  {
     this.setState({name: event.target.value});
-      console.log(this.state.name);
+      //console.log(this.state.name);
   }
-  handleSubmit(event){
+
+/* Creates Post request and new item to store*/
+  createPost(formValue)
+  {
+    let postOptions = 
+      JSON.stringify(
+        {
+          title: 'malcolm',
+          url: "https://github.com/malcolmessaid/green-light",
+          author: formValue,
+          description: "yay: post request works"
+        });
+
+    axios.post('/api/track/', postOptions,
+       { headers: { "Content-Type": "application/json" } } )
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      })
+      .catch(function (error) {
+        console.log('in error handling');
+        console.log(error);
+      });
+
+  } 
+
+  getRequest(){
+    axios
+      .get('/api/filter/')
+      .then(res => {
+        // console.log('hell');
+        console.log(res);
+        console.log(res.data);
+      })
+      .catch(function (error) {
+        console.log('in error handling');
+        console.log(error);
+      });
+  }
+
+
+// trying to create a post request upon submit. but that is returing a 500 erorr. a get reuqest works
+// will have to render (and potennitall reupdtate data field form constrictor to porperly render)
+  handleSubmit(event)
+  {
     event.preventDefault();
-    console.log('handle submit');
-    console.log(this.state.name);
+    this.createPost(this.state.name);ß
+    console.log('Submit Bar: handled submit');
+    // console.log(this.state.name);
   }
 
   render(){
     return (
       <form onSubmit={this.handleSubmit}>
         <input value={this.state.value} onChange={this.handleChange}/>
-        <input type='submit' value='Submit'/>
+        <input type='submit' value='Add'/>
       </form>
     )
   }
 }
 
-class ArticleList extends Component {
-  // constructor(props){
-  //   super(props);
-  //
-  //   this.state.
-  // }
-  render(){
+class ArticleList extends Component 
+{
+  render()
+  {
+    console.log('Articlelist: Top Rendering Data Call');
     return (
       <ul>
         {this.props.articles.map((item) =>
@@ -49,14 +95,14 @@ class ArticleList extends Component {
   }
 }
 
-class App extends Component {
-
+class App extends Component 
+{
   constructor(props){
     super(props);
     this.state = {data: []};
   }
 
-/* Fetching Data from backend. Basically just getting a list of (POSTs of Gets,
+/* Fetching Data from backend. Basically just getting a list of (POSTs or Gets,
  * I'm not really sure.) So logic of what time give happens on backend. really in
  * in conjuction with both. becasue it needs to give at the right time and place
  * to the frontend. like when someon clicks a button ofn the frontend to sort
@@ -65,18 +111,18 @@ class App extends Component {
  * fetch that particular list from the backend. I guess that is where databases
  * come in.
  */
-  componentDidMount(){
+  componentDidMount()
+  {
     fetch('/api/track')
       .then(response => response.json())
       .then(list => this.setState({data: list})); // sets data to what i've requested
 
-    console.log('here');
-    console.log(this.state.data)
+    console.log('App: component did mount call');
+    // console.log(this.state.data)
   }
-
-
-  render(){
-      console.log('here1');
+  render()
+  {
+    // console.log('App: Top Rendering Data Call');
     return (
       <div>
         <ArticleList articles={this.state.data}/>
